@@ -26,9 +26,11 @@
 #include <stdio.h>
 #include <Wire.h>
 #include "config.h"
+#include "utilitaires.h"
 #include "stepper.h"
 #include "affichage.h"
 #include "clavier.h"
+
 #include "SPIFFS.h" 
 
 
@@ -41,6 +43,7 @@
  * it only sets the emergencySwitchTriggered flag and then returns. 
  * The actual emergency stop will than be handled in the loop function
  */
+/*
 void ICACHE_RAM_ATTR emergencySwitchHandler()
 {
   // we do not realy need to debounce here, since we only want to trigger a stop, no matter what.
@@ -57,24 +60,29 @@ void ICACHE_RAM_ATTR emergencySwitchHandler()
     stepper.releaseEmergencyStop();
   }
 }
+*/
 
 void limitSwitchHandler()
 {
   limitSwitchState = digitalRead(LIMIT_SWITCH_PIN);
   lastDebounceTime = millis();
+  
 }
 
 void setup()
 {
   Serial.begin(115200);
 
-  //-- Init du FS interne 
+    //-- Init du FS interne 
   Serial.println(F("Inizializing FS..."));
   if (SPIFFS.begin()){
       Serial.println(F("SPIFFS mounted correctly."));
   }else{
       Serial.println(F("!An error occurred during SPIFFS mounting"));
   }
+
+  // Lectures des paramètres sauvegardés
+  readAllParameters();
 
     //-- Init de l'écran
   tft.init();
@@ -85,7 +93,7 @@ void setup()
   // Assigne le canal PWM au pin 23
   ledcAttachPin(TFT_BL, pwmChannel);
   // Créer la tension en sortie choisi
-  ledcWrite(pwmChannel, 255); 
+  ledcWrite(pwmChannel, BACKLIGHT); 
 
   //-- Init du touch screen
   touchScreen.begin();
@@ -96,13 +104,13 @@ void setup()
   //set the pin for the emegrendy switch and limit switch to input with inernal pullup
   //the emergency switch is connected in a Active Low configuraiton in this example, meaning the switch connects the input to ground when closed
   //pinMode(EMERGENCY_STOP_PIN, INPUT_PULLUP);
-  //pinMode(LIMIT_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(LIMIT_SWITCH_PIN, INPUT_PULLUP);
 
   //attach an interrupt to the IO pin of the ermegency stop switch and specify the handler function
   //attachInterrupt(digitalPinToInterrupt(EMERGENCY_STOP_PIN), emergencySwitchHandler, RISING);
 
   //attach an interrupt to the IO pin of the limit switch and specify the handler function
-  //attachInterrupt(digitalPinToInterrupt(LIMIT_SWITCH_PIN), limitSwitchHandler, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(LIMIT_SWITCH_PIN), limitSwitchHandler, CHANGE);
 
   // tell the ESP_flexystepper in which direction to move when homing is required (only works with a homing / limit switch connected)
   stepper.setDirectionToHome(1);
@@ -115,24 +123,37 @@ void setup()
   stepper.setAccelerationInStepsPerSecondPerSecond(ACCELERATION_IN_STEPS_PER_SECOND);
   stepper.setDecelerationInStepsPerSecondPerSecond(DECELERATION_IN_STEPS_PER_SECOND);
   stepper.setStepsPerMillimeter(STEP_PER_MILLIMETER);
-  
-  // Définir Home
-  set_home();
 
   stepper.startAsService(0);
 
-  // Affiche le clavier
-  tft.fillScreen(TFT_BLACK);
-  fex.drawJpgFile(SPIFFS, "/Clavier.jpg", 0, 0);
-  affiche_reel_first(HAUTEUR_MAX);
-  affiche_consigne(0.0);
-  affiche_button_ok();
+  stepper.goToLimitAndSetAsHome(__null, ((HAUTEUR_MAX * STEP_PER_MILLIMETER) + 1000));
+
+  afficheMenuPrincipal();
+
 }
 
 
 void loop()
 {
-  actuelMillis = millis();
+  // Compteur pour le fade du LCD
+  timer_fade = millis();
+  if (timer_fade > time_now_fader + (TIME_FADE * 1000)) {
+    ledcWrite(pwmChannel, 10);
+  }
+  else
+  {
+    ledcWrite(pwmChannel, 200);
+  }
+
+  if (limitSwitchState != oldConfirmedLimitSwitchState && (millis() - lastDebounceTime) > debounceDelay) {
+    if (limitSwitchState == LOW) {
+      oldConfirmedLimitSwitchState = limitSwitchState;
+      stepper.setLimitSwitchActive(stepper.LIMIT_SWITCH_BEGIN);
+      set_home();
+    }
+  }
+
+   //actuelMillis = millis();
   affiche_reel(stepper.getCurrentPositionInMillimeters());
   
   //-- Permet de verifier que nous avons atteind l'objectif
@@ -148,7 +169,7 @@ void loop()
     flag_affiche_ok = false;
   }
 
-  //Serial.printf("%05.1f\n", consigne); 
+  //Serial.printf("%05.1f\n", stepper.getCurrentPositionInMillimeters()); 
 
   if(flag_Back && stepper.motionComplete()) {
     stepper_go_to(consigne);
@@ -166,12 +187,8 @@ void loop()
   if ((millis() - lastDebounceTimeKeyboard) > debounceDelayKeyboard) {
     flag_keyboard = true;
   }
-
-
   
 
-  
-
-  //stepper.processMovement();
+  stepper.processMovement();
   
 }

@@ -7,26 +7,30 @@
 #define LIMIT_SWITCH_PIN                     32           //define the IO pin where the limit switches are connected to (switches in series in normally closed setup against ground)
 
 // Speed settings
-#define SPEED_IN_STEPS_PER_SECOND           15000
+#define SPEED_IN_STEPS_PER_SECOND           8000
 #define ACCELERATION_IN_STEPS_PER_SECOND    800
 #define DECELERATION_IN_STEPS_PER_SECOND    800
 
 #define STEP_PER_MILLIMETER                 320         // Avec un ration de poulie de 1,6, il 320 pas pour faire 1 mm (soit 640 pas pour un tours de manivelle)
 
 // Définition de la table de raboteuse
-#define HAUTEUR_MINI    2               // en mm
-#define HAUTEUR_MAX     230             // en mm
-#define RATTRAPE_JEU    1               // en mm
-#define INCREMENT       2               // en mm
+int HAUTEUR_MINI;               // en mm
+int HAUTEUR_MAX;             // en mm
+int RATTRAPE_JEU;               // en mm
+int INCREMENT;               // en mm
 
 //-- Back Light LCD
 #define pwmChannel  1
 #define frequence   500
 #define resolution  8
+int BACKLIGHT;
 
 #define DISPLAY_WIDTH  480
 #define DISPLAY_HEIGHT 320
-#define INTERVAL 100                // P�riode entre chaque rafraîchissement de l'écran en ms (ici 5 Hz (1/200 ms))
+
+#define LENGTH(x) (strlen(x) + 1)   // length of char string
+#define EEPROM_SIZE 200             // EEPROM size
+
 
 
 // variables for consigne
@@ -40,16 +44,26 @@ unsigned long debounceDelay = 100;              //the minimum delay in milliseco
 unsigned long lastDebounceTimeKeyboard = 0;
 unsigned long debounceDelayKeyboard = 250;
 
-unsigned long actuelMillis = 0;     // Pour l'affichage
-unsigned long precedentMillis = 0;
+unsigned long time_now_fader = 0;     // Compteur de temps pour le fade du LCD
+unsigned long timer_fade = 0;         // Compteur pour le fade du LCD
+unsigned long TIME_FADE = 20000;       // Temps avant de baisser le brightness de l'écran
 
 int keyboard = 0;
-int etat = 0;
+int etat = 0;                       // Etat bouton Ok - Stop etc...
+int Menu = 0;   
+int compteurParametres = 0;  
+int old_compteurParametres = 99;
+int compteur= 0;
+bool flag_save = false;
 
+String nomParametre = "";
+String sauveNomParametre = "";
+String unite = "";
+int parametre = 0;
 
 
 bool flag_keyboard = true;      // Permet de savoir si nous avons l'autorisation de capter une touche
-bool flag_button_ok = true;     // Flag pour signaler si le bouton Ok est affiché
+
 bool flag_move = false;         // Flag pour signaler si le moteur tourne
 bool flag_Goal = false;                 // Flag pour signaler que nous sommes à la target
 bool flag_Back = false;
@@ -59,4 +73,9 @@ bool flag_digit2 = false;
 bool flag_digit3 = false;
 bool flag_point = false;
 bool flag_affiche_ok = true;
+bool flag_boucle = true;
+bool flag_refresh = false;
+byte limitSwitchState = 1;
+byte oldConfirmedLimitSwitchState = 1;
+
 

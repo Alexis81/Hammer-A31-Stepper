@@ -7,8 +7,7 @@ int previousDirection = 1;
 
 
 bool buttonStateChangeDetected = false;
-byte limitSwitchState = 0;
-byte oldConfirmedLimitSwitchState = 0;
+
 
 
 //----------------------------------------------------------------------------------
@@ -53,6 +52,6 @@ void is_move() {
 // Permet de mettre à zéro le compteur soit Home
 //----------------------------------------------------------------------------------
 void set_home() {
-    stepper.setTargetPositionInMillimeters(HAUTEUR_MAX);
-    stepper.setCurrentPositionInMillimeters(HAUTEUR_MAX);
+    stepper.setTargetPositionInMillimeters((float)HAUTEUR_MAX);
+    stepper.setCurrentPositionInMillimeters((float)HAUTEUR_MAX);
 }

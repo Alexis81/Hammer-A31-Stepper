@@ -1,18 +1,26 @@
-FT62XXTouchScreen touchScreen = FT62XXTouchScreen(DISPLAY_HEIGHT, PIN_SDA, PIN_SCL);
+#include "menuParametres.h"
+//FT62XXTouchScreen touchScreen = FT62XXTouchScreen(DISPLAY_HEIGHT, PIN_SDA, PIN_SCL);
 
 void scan_keyboard() {
 
     TouchPoint touchPos = touchScreen.read();
 
-   if(flag_keyboard) {
+   if(flag_keyboard && Menu == 0) {
 
         if( touchPos.touched) {
 
+            time_now_fader = millis();
+
             int x = touchPos.xPos;
             int y = touchPos.yPos;
+
+            // Touche menu
+            if ((x >=285 ) && (x <= 478) && (y >= 2) && (y <= 35)) {
+                flag_keyboard = false;
+                Menu = 1;
+                parametres();
+            }
             
-
-
             // Touche Del
             if ((x >=0 ) && (x <= 89) && (y >= 241) && (y <= 319)) {
                 flag_keyboard = true;
@@ -134,7 +142,6 @@ void scan_keyboard() {
                         }
                         
                         if(stepper.getCurrentPositionInMillimeters() < consigne) {
-                            //Serial.printf("%05.1f\n", stepper.getCurrentPositionInMillimeters()); 
                             stepper_go_to(consigne + (float)RATTRAPE_JEU);
                             flag_Back = true;
                         }else{
@@ -211,5 +218,36 @@ void scan_keyboard() {
             lastDebounceTimeKeyboard = millis();
         }
     }
+
+    if(Menu == 1) {
+        if( touchPos.touched) {
+
+            time_now_fader = millis();
+
+            int x = touchPos.xPos;
+            int y = touchPos.yPos;
+
+            // Touche menu Edit
+            if ((x >=162 ) && (x <= 318) && (y >= 240) && (y <= 306)) {
+                flag_refresh = true;
+                flag_boucle = true;
+                compteurParametres = 0;  
+                old_compteurParametres = 99;
+                Menu = 2;
+                editParametres();
+            }
+
+                // Fléche close
+            if ((x >=440 ) && (x <= 480) && (y >= 0) && (y <= 40)) {
+                Menu = 0;
+                flag_keyboard = true;
+                flag_boucle = false;
+                afficheMenuPrincipal();
+                
+            }
+        }
+    }
+
+    
 
 }
