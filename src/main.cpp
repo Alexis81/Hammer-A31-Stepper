@@ -26,18 +26,13 @@
 #include <stdio.h>
 #include <Wire.h>
 #include "config.h"
-#include "utilitaires.h"
 #include "affichage.h"
+#include "utilitaires.h"
 #include "stepper.h"
 #include "clavier.h"
 #include "SPIFFS.h"
 
-/**
- * the iterrupt service routine (ISR) for the emergency swtich
- * this gets called on a rising edge on the IO Pin the emergency switch is connected
- * it only sets the emergencySwitchTriggered flag and then returns.
- * The actual emergency stop will than be handled in the loop function
- */
+
 /*
 void ICACHE_RAM_ATTR emergencySwitchHandler()
 {
@@ -98,9 +93,6 @@ void setup()
   //-- Rotation de l'écran
   tft.setRotation(1);
 
-  // Affichage logo
-  affiche_logo();
-
   // set the pin for the emegrendy switch and limit switch to input with inernal pullup
   // the emergency switch is connected in a Active Low configuraiton in this example, meaning the switch connects the input to ground when closed
   // pinMode(EMERGENCY_STOP_PIN, INPUT_PULLUP);
@@ -126,9 +118,13 @@ void setup()
 
   stepper.startAsService(0);
 
+  // Affichage logo
+  affiche_logo();
+
   stepper.goToLimitAndSetAsHome(__null, (((HAUTEUR_MAX + OFFSET_MACHINE_FLOAT) * STEP_PER_MILLIMETER) + 1000));
 
   afficheMenuPrincipal();
+  
 }
 
 void loop()
@@ -148,7 +144,7 @@ void loop()
   if (limitSwitchState == oldConfirmedLimitSwitchState && (millis() - lastDebounceTime) > debounceDelay)
   {
     lastDebounceTime = millis();
-    affiche_alarm_ampoule_home(true);
+    //affiche_alarm_ampoule_home(true);
     flag_home_on = true;
 
     //-- Lors du premier run recherche Home
@@ -165,7 +161,6 @@ void loop()
     if ((limitSwitchState == LOW && !flag_first_run))
     {
       stepper.emergencyStop();
-      affiche_alarm();
     }
   }
 

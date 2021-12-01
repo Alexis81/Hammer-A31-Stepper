@@ -8,8 +8,9 @@ ESP_FlexyStepper stepper;
 //----------------------------------------------------------------------------------
 void stepper_go_to(float mm)
 {
-
-    stepper.setTargetPositionInMillimeters(mm);
+    if(flag_permit_run) {
+        stepper.setTargetPositionInMillimeters(mm);
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -27,6 +28,7 @@ void is_goal()
     else
     {
         flag_Goal = false;
+
     }
 }
 
@@ -59,11 +61,6 @@ void set_home()
     stepper.setCurrentPositionInMillimeters((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
     stepper.setTargetPositionInMillimeters((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
 
-    // Si l'inter home est activé
-    if (flag_home_on)
-    {
-        affiche_alarm_ampoule_home(false);
-        flag_home_on = false;
-    }
+    
     // Serial.println((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
 }

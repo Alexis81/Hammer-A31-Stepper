@@ -169,15 +169,15 @@ void editParametres()
 
             tft.setTextDatum(TL_DATUM);
 
-            fex.drawJpgFile(SPIFFS, "/Bouton_Plus.jpg", 365, 140);
-            fex.drawJpgFile(SPIFFS, "/Bouton_Moins.jpg", 70, 140);
+            fex.drawBmp("/Bouton_Plus.bmp", 365, 140);
+            fex.drawBmp("/Bouton_Moins.bmp", 70, 140);
 
-            fex.drawJpgFile(SPIFFS, "/Fleche_Precedent.jpg", 0, 260);
-            fex.drawJpgFile(SPIFFS, "/Fleche_Suivant.jpg", 420, 260);
+            fex.drawBmp("/Fleche_Precedent.bmp", 0, 260);
+            fex.drawBmp("/Fleche_Suivant.bmp", 420, 260);
 
             if (flag_save)
             {
-                fex.drawJpgFile(SPIFFS, "/Bouton_Save.jpg", 120, 260);
+                fex.drawBmp("/Bouton_Save.bmp", 120, 260);
             }
 
             old_compteurParametres = 99;

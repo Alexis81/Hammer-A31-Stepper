@@ -37,7 +37,7 @@ void scan_keyboard()
                 stepper.emergencyStop();
                 affiche_consigne(consigne);
                 affiche_button_ok();
-                affiche_alarm_ampoule_home(false);
+                Etat = 0;
             }
 
             // Touche 0
@@ -160,6 +160,7 @@ void scan_keyboard()
                 case 0:
                     affiche_button_stop();
                     flag_affiche_ok = true;
+                    flag_permit_run = true;
                     Etat = 1;
                     if (consigne < (float)HAUTEUR_MINI)
                     {
@@ -181,10 +182,12 @@ void scan_keyboard()
                 case 1:
                     affiche_button_ok_urgence();
                     stepper.emergencyStop(true);
+                    flag_permit_run = false;
                     Etat = 2;
                     break;
 
                 case 2:
+                    flag_permit_run = true;
                     affiche_button_stop();
                     stepper.releaseEmergencyStop();
                     stepper_go_to(consigne);

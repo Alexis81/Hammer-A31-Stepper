@@ -1,3 +1,6 @@
+// https://cloudconvert.com/jpg-to-bmp
+
+
 #include <SPI.h>
 #include <TFT_eSPI.h> // Hardware-specific library
 #include <TFT_eFEX.h>
@@ -43,7 +46,7 @@ void affiche_consigne(float mm)
 ------------------------------------------------------------------------------*/
 void affiche_button_ok()
 {
-    fex.drawJpgFile(SPIFFS, "/Bouton_Ok.jpg", 285, 251);
+    fex.drawBmp("/Bouton_Ok.bmp", 285, 251);
 }
 
 /*------------------------------------------------------------------------------
@@ -51,7 +54,7 @@ void affiche_button_ok()
 ------------------------------------------------------------------------------*/
 void affiche_button_ok_urgence()
 {
-    fex.drawJpgFile(SPIFFS, "/Bouton_Ok_Urgence.jpg", 285, 251);
+    fex.drawBmp("/Bouton_Ok_Urgence.bmp", 285, 251);
 }
 
 /*------------------------------------------------------------------------------
@@ -59,7 +62,7 @@ void affiche_button_ok_urgence()
 ------------------------------------------------------------------------------*/
 void affiche_button_stop()
 {
-    fex.drawJpgFile(SPIFFS, "/Bouton_Stop.jpg", 285, 251);
+    fex.drawBmp("/Bouton_Stop.jpg", 285, 251);
 }
 
 /*------------------------------------------------------------------------------
@@ -67,23 +70,10 @@ void affiche_button_stop()
 ------------------------------------------------------------------------------*/
 void affiche_alarm()
 {
-    fex.drawJpgFile(SPIFFS, "/Alarm.jpg", 285, 251);
+    fex.drawBmp("/Alarm.bmp", 285, 251);
 }
 
-/*------------------------------------------------------------------------------
-  Permet d'afficher l'ampoule Home
-------------------------------------------------------------------------------*/
-void affiche_alarm_ampoule_home(bool Etat)
-{
-    if (Etat)
-    {
-        fex.drawJpgFile(SPIFFS, "/Ampoule_On.jpg", 390, 175);
-    }
-    else
-    {
-        fex.drawJpgFile(SPIFFS, "/Ampoule_Off.jpg", 390, 175);
-    }
-}
+
 
 /*------------------------------------------------------------------------------
   Permet d'afficher le logo
@@ -91,7 +81,7 @@ void affiche_alarm_ampoule_home(bool Etat)
 void affiche_logo()
 {
     tft.fillScreen(TFT_WHITE);
-    fex.drawJpgFile(SPIFFS, "/Hammer.jpg", 80, 15);
+    fex.drawBmp("/Hammer.bmp", 80, 15);
     delay(2000);
 }
 
@@ -100,7 +90,7 @@ void affiche_logo()
 ------------------------------------------------------------------------------*/
 void affiche_bouton_edit()
 {
-    fex.drawJpgFile(SPIFFS, "/Bouton_Edit.jpg", 338, 260);
+    fex.drawBmp("/Bouton_Edit.bmp", 338, 260);
 }
 
 /*------------------------------------------------------------------------------
@@ -109,7 +99,7 @@ void affiche_bouton_edit()
 void affiche_titre_menu(String Name)
 {
     tft.fillRect(0, 0, 480, 40, TFT_WHITE);
-    fex.drawJpgFile(SPIFFS, "/Close.jpg", 440, 0);
+    fex.drawBmp("/Close.bmp", 440, 0);
     tft.drawLine(0, 40, 480, 42, TFT_DARKGREY);
     tft.setTextDatum(TL_DATUM);
     tft.setTextColor(TFT_DARKGREY, TFT_WHITE);
@@ -123,7 +113,7 @@ void affiche_titre_menu(String Name)
 void afficheMenuPrincipal()
 {
     tft.fillScreen(TFT_BLACK);
-    fex.drawJpgFile(SPIFFS, "/Clavier.jpg", 0, 0);
+    fex.drawBmp("/Clavier.bmp", 0, 0);
     affiche_reel(consigne);
     affiche_consigne(0.0);
     affiche_button_ok();

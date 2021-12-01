@@ -119,4 +119,5 @@ void readAllParameters()
   OFFSET_MACHINE_FLOAT = float(OFFSET_MACHINE) / 100;
 }
 
+
 #endif

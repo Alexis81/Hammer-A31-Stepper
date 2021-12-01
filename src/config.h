@@ -45,11 +45,11 @@ float consigne = (float)HAUTEUR_MINI;
 
 // variables for software debouncing of the limit switches
 unsigned long lastDebounceTime = 0;
-unsigned long debounceDelay = 100; // the minimum delay in milliseconds to check for bouncing of the switch. Increase this slighlty if you switches tend to bounce a lot
+unsigned long debounceDelay = 300; // the minimum delay in milliseconds to check for bouncing of the switch. Increase this slighlty if you switches tend to bounce a lot
 
 // variables for software debouncing keyboard
 unsigned long lastDebounceTimeKeyboard = 0;
-unsigned long debounceDelayKeyboard = 250;
+unsigned long debounceDelayKeyboard = 100;
 
 int keyboard = 0;                // Chiffre saisie au clavier
 int Etat = 0;                    // Etat bouton Ok - Stop etc...
@@ -82,6 +82,8 @@ bool flag_refresh = false;
 bool flag_first_run = true; // Flag pour signaler que nous venons de lancer le programme
 bool flag_save = false;     // Flag pour savoir si nous devons sauvegarder
 bool flag_home_on = false;  // Signale que nous avons une interuption avec l'inter Home
+bool flag_permit_run = true;    // Donne l'autorisation au moteur de tourner
+bool toggle = false;                       // Etat précedent de la Led rouge
 byte limitSwitchState = 1;
 byte oldConfirmedLimitSwitchState = 0;
 
