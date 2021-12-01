@@ -27,10 +27,9 @@
 #include <Wire.h>
 #include "config.h"
 #include "utilitaires.h"
-#include "stepper.h"
 #include "affichage.h"
+#include "stepper.h"
 #include "clavier.h"
-
 #include "SPIFFS.h"
 
 /**
@@ -79,6 +78,7 @@ void setup()
     Serial.println(F("!An error occurred during SPIFFS mounting"));
   }
 
+  
   // Lectures des paramètres sauvegardés
   readAllParameters();
 
@@ -98,6 +98,9 @@ void setup()
 
   //-- Rotation de l'écran
   tft.setRotation(1);
+
+  // Affichage logo
+  affiche_logo();
 
   // set the pin for the emegrendy switch and limit switch to input with inernal pullup
   // the emergency switch is connected in a Active Low configuraiton in this example, meaning the switch connects the input to ground when closed
@@ -135,17 +138,19 @@ void loop()
   timer_fade = millis();
   if (timer_fade > time_now_fader + (TIME_FADE * 1000))
   {
-    ledcWrite(pwmChannel, 10);
+    ledcWrite(pwmChannel, 5);
   }
   else
   {
-    ledcWrite(pwmChannel, 200);
+    ledcWrite(pwmChannel, BACKLIGHT);
   }
 
   //-- Si le switch de home est actif
   if (limitSwitchState == oldConfirmedLimitSwitchState && (millis() - lastDebounceTime) > debounceDelay)
   {
     lastDebounceTime = millis();
+    affiche_alarm_ampoule_home(true);
+    flag_home_on = true;
 
     //-- Lors du premier run recherche Home
     if (limitSwitchState == LOW && flag_first_run)
@@ -157,9 +162,10 @@ void loop()
       set_home();
     }
     
-    // Si par hazard reviens à toucher switch Home, arrête le moteur
+    // Si par hazard la table touche le switch Home, arrête le moteur
     if((limitSwitchState == LOW && !flag_first_run)) {
       stepper.emergencyStop();
+      affiche_alarm();
     }
   }
 
@@ -183,6 +189,7 @@ void loop()
 
   // Serial.printf("%05.1f\n", stepper.getCurrentPositionInMillimeters());
 
+  // Permet de rattraper le jeu de la table lors d'une descente
   if (flag_Back && stepper.motionComplete())
   {
     stepper_go_to(consigne);

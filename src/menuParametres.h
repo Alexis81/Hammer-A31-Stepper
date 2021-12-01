@@ -1,6 +1,9 @@
 #include <TFT_eSPI.h> // Hardware-specific library
 FT62XXTouchScreen touchScreen = FT62XXTouchScreen(DISPLAY_HEIGHT, PIN_SDA, PIN_SCL);
 
+/*------------------------------------------------------------------------------
+  Permet d'afficher les différents paramètres
+------------------------------------------------------------------------------*/
 void parametres()
 {
 
@@ -10,13 +13,7 @@ void parametres()
     tft.fillScreen(TFT_WHITE);
 
     // Création du titre
-    tft.fillRect(0, 0, 480, 40, TFT_WHITE);
-    fex.drawJpgFile(SPIFFS, "/Close.jpg", 440, 0);
-    tft.drawLine(0, 40, 480, 42, TFT_DARKGREY);
-    tft.setTextDatum(TL_DATUM);
-    tft.setTextColor(TFT_DARKGREY, TFT_WHITE);
-    tft.setFreeFont(&FreeSans18pt7b); // Choose a nicefont that fits box
-    tft.drawString("Settings", 4, 4);
+    affiche_titre_menu("Settings");
 
     // Création des paramètres
     tft.setTextColor(TFT_BLACK, TFT_WHITE);
@@ -31,33 +28,40 @@ void parametres()
     tft.drawString("- Up after Home  :", 4, 230);
     tft.drawString("- Offset machine :", 4, 260);
 
+    //Serial.println(tft.textWidth("999"));
+
+    tft.setTextDatum(TR_DATUM);
+    tft.setTextPadding(41);
+
+    // Position X des chiffres
+    int x = 300;
     // Hauteur Maxi
-    tft.drawNumber(HAUTEUR_MAX, 245, 50);
-
+    tft.drawNumber(HAUTEUR_MAX, x, 50);
     // Hauteur Mini
-    tft.drawNumber(HAUTEUR_MINI, 245, 80);
-
+    tft.drawNumber(HAUTEUR_MINI, x, 80);
     // Rattrape jeu
-    tft.drawNumber(RATTRAPE_JEU, 245, 110);
-
+    tft.drawNumber(RATTRAPE_JEU, x, 110);
     // Increment
-    tft.drawNumber(INCREMENT, 245, 140);
-
+    tft.drawNumber(INCREMENT, x, 140);
     // Blacklight
-    tft.drawNumber(BACKLIGHT, 245, 170);
-
+    tft.drawNumber(BACKLIGHT, x, 170);
     // fade screen
-    tft.drawNumber(TIME_FADE, 245, 200);
-
+    tft.drawNumber(TIME_FADE, x, 200);
     // Up after home
-    tft.drawNumber(UP_AFTER_HOME, 245, 230);
-
+    tft.drawNumber(UP_AFTER_HOME, x, 230);
     // Offset machine
-    tft.drawNumber(OFFSET_MACHINE, 245, 260);
+    tft.drawNumber(OFFSET_MACHINE, x, 260);
 
-    fex.drawJpgFile(SPIFFS, "/Bouton_Edit.jpg", 338, 260);
+    tft.setTextDatum(TL_DATUM);
+    tft.setTextPadding(0);
+
+    // Affichage du bouton Edit
+    affiche_bouton_edit();
 }
 
+/*------------------------------------------------------------------------------
+  Permet de modifier les différents paramètres
+------------------------------------------------------------------------------*/
 void editParametres()
 {
 
@@ -67,12 +71,7 @@ void editParametres()
     tft.fillScreen(TFT_WHITE);
 
     // Création du titre
-    fex.drawJpgFile(SPIFFS, "/Close.jpg", 440, 0);
-    tft.drawLine(0, 40, 480, 42, TFT_DARKGREY);
-    tft.setTextDatum(TL_DATUM);
-    tft.setTextColor(TFT_DARKGREY, TFT_WHITE);
-    tft.setFreeFont(&FreeSans18pt7b); // Choose a nicefont that fits box
-    tft.drawString("Settings Edit", 4, 4);
+    affiche_titre_menu("Settings Edit");
 
     while (flag_boucle)
     {
@@ -82,6 +81,8 @@ void editParametres()
             nomParametre = "Hauteur Maxi";
             parametre = HAUTEUR_MAX;
             unite = "mm";
+            maxi = 9999;
+            mini = 1;
             compteur = 0;
             break;
 
@@ -90,6 +91,8 @@ void editParametres()
             parametre = HAUTEUR_MINI;
             unite = "mm";
             compteur = 1;
+            maxi = 9999;
+            mini = 1;
             break;
 
         case 2:
@@ -97,6 +100,8 @@ void editParametres()
             parametre = RATTRAPE_JEU;
             unite = "mm";
             compteur = 2;
+            maxi = 9999;
+            mini = 1;
             break;
 
         case 3:
@@ -104,6 +109,8 @@ void editParametres()
             parametre = INCREMENT;
             unite = "mm";
             compteur = 3;
+            maxi = 4;
+            mini = 1;
             break;
 
         case 4:
@@ -111,6 +118,8 @@ void editParametres()
             parametre = BACKLIGHT;
             unite = "";
             compteur = 4;
+            maxi = 255;
+            mini = 10;
             break;
 
         case 5:
@@ -118,12 +127,16 @@ void editParametres()
             parametre = TIME_FADE;
             unite = "secondes";
             compteur = 5;
+            maxi = 9999;
+            mini = 5;
             break;
 
         case 6:
             nomParametre = "Up after Home";
             parametre = UP_AFTER_HOME;
             unite = "   mm    ";
+            maxi = 10;
+            mini = 1;
             compteur = 6;
             break;
 
@@ -132,9 +145,8 @@ void editParametres()
             parametre = OFFSET_MACHINE;
             unite = "dixieme mm";
             compteur = 7;
-            break;
-
-        case 99:
+            maxi = 9999;
+            mini = 1;
             break;
 
         default:
@@ -143,7 +155,6 @@ void editParametres()
 
         if (compteurParametres != old_compteurParametres || flag_refresh)
         {
-
             tft.setTextSize(2);
             tft.setTextPadding(90);
 
@@ -189,25 +200,31 @@ void editParametres()
                 // Touche menu -
                 if ((x >= 70) && (x <= 115) && (y >= 140) && (y <= 185))
                 {
-                    parametre = parametre - 1;
-                    if (compteur == 4)
-                    {
-                        ledcWrite(pwmChannel, parametre);
+                    if(parametre > mini) {
+                        parametre = parametre - 1;
+                        // Permet d'ajuster en live la luminosité de l'écran LCD
+                        if (compteur == 4)
+                        {
+                            ledcWrite(pwmChannel, parametre);
+                        }
+                        flag_refresh = true;
+                        flag_save = true;
                     }
-                    flag_refresh = true;
-                    flag_save = true;
                 }
 
                 // Touche menu +
                 if ((x >= 365) && (x <= 410) && (y >= 140) && (y <= 185))
                 {
-                    parametre = parametre + 1;
-                    if (compteur == 4)
-                    {
-                        ledcWrite(pwmChannel, parametre);
+                    if(parametre < maxi) {
+                        parametre = parametre + 1;
+                        // Permet d'ajuster en live la luminosité de l'écran LCD
+                        if (compteur == 4)
+                        {
+                            ledcWrite(pwmChannel, parametre);
+                        }
+                        flag_refresh = true;
+                        flag_save = true;
                     }
-                    flag_refresh = true;
-                    flag_save = true;
                 }
 
                 // Fléche précédente
