@@ -2,7 +2,7 @@
 
 Automatisation de la montée et descente de la table de la raboteuse.
 
-#Materiels
+#titreMateriels
 
 * WT32-SC01 ([Site](http://www.wireless-tag.com/portfolio/wt32-sc01/))
 * Contrôleur moteur ([Site](https://fr.aliexpress.com/item/32822244731.html))
