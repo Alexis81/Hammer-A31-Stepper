@@ -42,10 +42,9 @@ void affiche_button_stop() {
 }
 
 void afficheMenuPrincipal() {
-  // Affiche le clavier
   tft.fillScreen(TFT_BLACK);
   fex.drawJpgFile(SPIFFS, "/Clavier.jpg", 0, 0);
-  //affiche_reel(HAUTEUR_MAX);
+  affiche_reel(consigne);
   affiche_consigne(0.0);
   affiche_button_ok();
 }

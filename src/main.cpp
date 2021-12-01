@@ -31,16 +31,12 @@
 #include "affichage.h"
 #include "clavier.h"
 
-#include "SPIFFS.h" 
-
-
-
-
+#include "SPIFFS.h"
 
 /**
  * the iterrupt service routine (ISR) for the emergency swtich
  * this gets called on a rising edge on the IO Pin the emergency switch is connected
- * it only sets the emergencySwitchTriggered flag and then returns. 
+ * it only sets the emergencySwitchTriggered flag and then returns.
  * The actual emergency stop will than be handled in the loop function
  */
 /*
@@ -66,25 +62,27 @@ void limitSwitchHandler()
 {
   limitSwitchState = digitalRead(LIMIT_SWITCH_PIN);
   lastDebounceTime = millis();
-  
 }
 
 void setup()
 {
   Serial.begin(115200);
 
-    //-- Init du FS interne 
+  //-- Init du FS interne
   Serial.println(F("Inizializing FS..."));
-  if (SPIFFS.begin()){
-      Serial.println(F("SPIFFS mounted correctly."));
-  }else{
-      Serial.println(F("!An error occurred during SPIFFS mounting"));
+  if (SPIFFS.begin())
+  {
+    Serial.println(F("SPIFFS mounted correctly."));
+  }
+  else
+  {
+    Serial.println(F("!An error occurred during SPIFFS mounting"));
   }
 
   // Lectures des paramètres sauvegardés
   readAllParameters();
 
-    //-- Init de l'écran
+  //-- Init de l'écran
   tft.init();
 
   //-- Gestion du backlit lCD
@@ -93,7 +91,7 @@ void setup()
   // Assigne le canal PWM au pin 23
   ledcAttachPin(TFT_BL, pwmChannel);
   // Créer la tension en sortie choisi
-  ledcWrite(pwmChannel, BACKLIGHT); 
+  ledcWrite(pwmChannel, BACKLIGHT);
 
   //-- Init du touch screen
   touchScreen.begin();
@@ -101,15 +99,15 @@ void setup()
   //-- Rotation de l'écran
   tft.setRotation(1);
 
-  //set the pin for the emegrendy switch and limit switch to input with inernal pullup
-  //the emergency switch is connected in a Active Low configuraiton in this example, meaning the switch connects the input to ground when closed
-  //pinMode(EMERGENCY_STOP_PIN, INPUT_PULLUP);
+  // set the pin for the emegrendy switch and limit switch to input with inernal pullup
+  // the emergency switch is connected in a Active Low configuraiton in this example, meaning the switch connects the input to ground when closed
+  // pinMode(EMERGENCY_STOP_PIN, INPUT_PULLUP);
   pinMode(LIMIT_SWITCH_PIN, INPUT_PULLUP);
 
-  //attach an interrupt to the IO pin of the ermegency stop switch and specify the handler function
-  //attachInterrupt(digitalPinToInterrupt(EMERGENCY_STOP_PIN), emergencySwitchHandler, RISING);
+  // attach an interrupt to the IO pin of the ermegency stop switch and specify the handler function
+  // attachInterrupt(digitalPinToInterrupt(EMERGENCY_STOP_PIN), emergencySwitchHandler, RISING);
 
-  //attach an interrupt to the IO pin of the limit switch and specify the handler function
+  // attach an interrupt to the IO pin of the limit switch and specify the handler function
   attachInterrupt(digitalPinToInterrupt(LIMIT_SWITCH_PIN), limitSwitchHandler, CHANGE);
 
   // tell the ESP_flexystepper in which direction to move when homing is required (only works with a homing / limit switch connected)
@@ -126,18 +124,17 @@ void setup()
 
   stepper.startAsService(0);
 
-  stepper.goToLimitAndSetAsHome(__null, ((HAUTEUR_MAX * STEP_PER_MILLIMETER) + 1000));
+  stepper.goToLimitAndSetAsHome(__null, (((HAUTEUR_MAX + OFFSET_MACHINE_FLOAT) * STEP_PER_MILLIMETER) + 1000));
 
   afficheMenuPrincipal();
-
 }
-
 
 void loop()
 {
-  // Compteur pour le fade du LCD
+  //-- Fade du LCD
   timer_fade = millis();
-  if (timer_fade > time_now_fader + (TIME_FADE * 1000)) {
+  if (timer_fade > time_now_fader + (TIME_FADE * 1000))
+  {
     ledcWrite(pwmChannel, 10);
   }
   else
@@ -145,21 +142,36 @@ void loop()
     ledcWrite(pwmChannel, 200);
   }
 
-  if (limitSwitchState != oldConfirmedLimitSwitchState && (millis() - lastDebounceTime) > debounceDelay) {
-    if (limitSwitchState == LOW) {
+  //-- Si le switch de home est actif
+  if (limitSwitchState == oldConfirmedLimitSwitchState && (millis() - lastDebounceTime) > debounceDelay)
+  {
+    lastDebounceTime = millis();
+
+    //-- Lors du premier run recherche Home
+    if (limitSwitchState == LOW && flag_first_run)
+    {
+      flag_first_run = false;
       oldConfirmedLimitSwitchState = limitSwitchState;
-      stepper.setLimitSwitchActive(stepper.LIMIT_SWITCH_BEGIN);
+      stepper.setLimitSwitchActive(stepper.LIMIT_SWITCH_COMBINED_BEGIN_AND_END);
+
       set_home();
+    }
+    
+    // Si par hazard reviens à toucher switch Home, arrête le moteur
+    if((limitSwitchState == LOW && !flag_first_run)) {
+      stepper.emergencyStop();
     }
   }
 
-   //actuelMillis = millis();
+  //-- Affiche les pas réels en mm
   affiche_reel(stepper.getCurrentPositionInMillimeters());
-  
+
   //-- Permet de verifier que nous avons atteind l'objectif
   is_goal();
 
-  if(flag_Goal && flag_affiche_ok) {
+  // Permet d'afficher le bouton OK
+  if (flag_Goal && flag_affiche_ok)
+  {
     affiche_button_ok();
     flag_keyboard = true;
     flag_digit1 = true;
@@ -169,13 +181,12 @@ void loop()
     flag_affiche_ok = false;
   }
 
-  //Serial.printf("%05.1f\n", stepper.getCurrentPositionInMillimeters()); 
+  // Serial.printf("%05.1f\n", stepper.getCurrentPositionInMillimeters());
 
-  if(flag_Back && stepper.motionComplete()) {
+  if (flag_Back && stepper.motionComplete())
+  {
     stepper_go_to(consigne);
     flag_Back = false;
-    
-
   }
 
   //-- Permet de vérifier si le moteur tourne
@@ -184,11 +195,12 @@ void loop()
   //-- Gestion du clavier
   scan_keyboard();
 
-  if ((millis() - lastDebounceTimeKeyboard) > debounceDelayKeyboard) {
+  // Debounce du clavier
+  if ((millis() - lastDebounceTimeKeyboard) > debounceDelayKeyboard)
+  {
     flag_keyboard = true;
   }
-  
 
+  //Serial.println(stepper.getCurrentPositionInMillimeters());
   stepper.processMovement();
-  
 }

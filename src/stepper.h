@@ -3,10 +3,7 @@
 // create the stepper motor object
 ESP_FlexyStepper stepper;
 
-int previousDirection = 1;
 
-
-bool buttonStateChangeDetected = false;
 
 
 
@@ -52,6 +49,15 @@ void is_move() {
 // Permet de mettre à zéro le compteur soit Home
 //----------------------------------------------------------------------------------
 void set_home() {
-    stepper.setTargetPositionInMillimeters((float)HAUTEUR_MAX);
-    stepper.setCurrentPositionInMillimeters((float)HAUTEUR_MAX);
+
+    delay(1000);
+
+    stepper.clearLimitSwitchActive();
+
+    stepper.moveRelativeInSteps(-(STEP_PER_MILLIMETER * UP_AFTER_HOME));
+    
+    stepper.setCurrentPositionInMillimeters((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
+    stepper.setTargetPositionInMillimeters((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
+
+    Serial.println((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
 }
