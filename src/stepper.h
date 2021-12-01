@@ -6,7 +6,8 @@ ESP_FlexyStepper stepper;
 //----------------------------------------------------------------------------------
 // Permet d'aller à une position données en mmm vers le haut
 //----------------------------------------------------------------------------------
-void stepper_go_to(float mm) {
+void stepper_go_to(float mm)
+{
 
     stepper.setTargetPositionInMillimeters(mm);
 }
@@ -14,13 +15,17 @@ void stepper_go_to(float mm) {
 //----------------------------------------------------------------------------------
 // Permet de savoir que nous avons atteind la cible
 //----------------------------------------------------------------------------------
-void is_goal() {
+void is_goal()
+{
     // 0 = Pas atteinte
     // 1 = Atteinte
-    if(stepper.getCurrentPositionInMillimeters() == consigne) {
+    if (stepper.getCurrentPositionInMillimeters() == consigne)
+    {
         flag_Goal = true;
         Etat = 0;
-    }else{
+    }
+    else
+    {
         flag_Goal = false;
     }
 }
@@ -28,12 +33,16 @@ void is_goal() {
 //----------------------------------------------------------------------------------
 // Permet de savoir si le moteur tourne
 //----------------------------------------------------------------------------------
-void is_move() {
+void is_move()
+{
     // 1 ou - 1 = se deplace
     // 0 =  arrêt
-    if(stepper.getDirectionOfMotion()) {
+    if (stepper.getDirectionOfMotion())
+    {
         flag_move = true;
-    }else {
+    }
+    else
+    {
         flag_move = false;
     }
 }
@@ -41,7 +50,8 @@ void is_move() {
 //----------------------------------------------------------------------------------
 // Permet de mettre à zéro le compteur soit Home
 //----------------------------------------------------------------------------------
-void set_home() {
+void set_home()
+{
 
     delay(1000);
     stepper.clearLimitSwitchActive();
@@ -50,9 +60,10 @@ void set_home() {
     stepper.setTargetPositionInMillimeters((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
 
     // Si l'inter home est activé
-    if(flag_home_on) {
+    if (flag_home_on)
+    {
         affiche_alarm_ampoule_home(false);
         flag_home_on = false;
     }
-    //Serial.println((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
+    // Serial.println((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
 }

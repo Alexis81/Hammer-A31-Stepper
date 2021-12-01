@@ -28,7 +28,7 @@ void parametres()
     tft.drawString("- Up after Home  :", 4, 230);
     tft.drawString("- Offset machine :", 4, 260);
 
-    //Serial.println(tft.textWidth("999"));
+    // Serial.println(tft.textWidth("999"));
 
     tft.setTextDatum(TR_DATUM);
     tft.setTextPadding(41);
@@ -200,7 +200,8 @@ void editParametres()
                 // Touche menu -
                 if ((x >= 70) && (x <= 115) && (y >= 140) && (y <= 185))
                 {
-                    if(parametre > mini) {
+                    if (parametre > mini)
+                    {
                         parametre = parametre - 1;
                         // Permet d'ajuster en live la luminosité de l'écran LCD
                         if (compteur == 4)
@@ -215,7 +216,8 @@ void editParametres()
                 // Touche menu +
                 if ((x >= 365) && (x <= 410) && (y >= 140) && (y <= 185))
                 {
-                    if(parametre < maxi) {
+                    if (parametre < maxi)
+                    {
                         parametre = parametre + 1;
                         // Permet d'ajuster en live la luminosité de l'écran LCD
                         if (compteur == 4)

@@ -114,10 +114,9 @@ void readAllParameters()
   TIME_FADE = getPreferencesInt("fade_screen", 60);
   UP_AFTER_HOME = getPreferencesInt("up_after_home", 1);
   OFFSET_MACHINE = getPreferencesInt("offset_machine", 0);
-  
+
   // Les convertions
   OFFSET_MACHINE_FLOAT = float(OFFSET_MACHINE) / 100;
-  
 }
 
 #endif

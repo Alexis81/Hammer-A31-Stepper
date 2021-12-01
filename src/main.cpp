@@ -78,7 +78,6 @@ void setup()
     Serial.println(F("!An error occurred during SPIFFS mounting"));
   }
 
-  
   // Lectures des paramètres sauvegardés
   readAllParameters();
 
@@ -161,9 +160,10 @@ void loop()
 
       set_home();
     }
-    
+
     // Si par hazard la table touche le switch Home, arrête le moteur
-    if((limitSwitchState == LOW && !flag_first_run)) {
+    if ((limitSwitchState == LOW && !flag_first_run))
+    {
       stepper.emergencyStop();
       affiche_alarm();
     }
@@ -208,6 +208,6 @@ void loop()
     flag_keyboard = true;
   }
 
-  //Serial.println(stepper.getCurrentPositionInMillimeters());
+  // Serial.println(stepper.getCurrentPositionInMillimeters());
   stepper.processMovement();
 }
