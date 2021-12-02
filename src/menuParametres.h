@@ -137,7 +137,7 @@ void editParametres()
         case 6:
             nomParametre = "Up after Home";
             parametre = UP_AFTER_HOME;
-            unite = "   mm    ";
+            unite = "mm";
             maxi = 10;
             mini = 1;
             compteur = 6;
@@ -149,7 +149,7 @@ void editParametres()
             unite = "dixieme mm";
             compteur = 7;
             maxi = 9999;
-            mini = 1;
+            mini = -9999;
             break;
 
         case 8:
@@ -176,13 +176,15 @@ void editParametres()
             tft.setTextDatum(TC_DATUM);
             tft.setTextColor(TFT_BLACK, TFT_YELLOW);
             tft.drawNumber(parametre, 235, 140);
+            tft.setTextPadding(400);
             tft.setTextColor(TFT_DARKGREY, TFT_WHITE);
             tft.drawString(unite, 235, 190);
 
             tft.setTextDatum(TL_DATUM);
+            tft.setTextPadding(0);
 
-            fex.drawBmp("/Bouton_Plus.bmp", 365, 140);
-            fex.drawBmp("/Bouton_Moins.bmp", 70, 140);
+            fex.drawJpgFile(SPIFFS, "/Bouton_Plus.jpg", 365, 140);
+            fex.drawJpgFile(SPIFFS, "/Bouton_Moins.jpg", 70, 140);
 
             fex.drawBmp("/Fleche_Precedent.bmp", 0, 260);
             fex.drawBmp("/Fleche_Suivant.bmp", 420, 260);

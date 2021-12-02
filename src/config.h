@@ -65,8 +65,8 @@ String sauveNomParametre = "";
 String unite = "";
 int parametre = 0;
 
-unsigned long maxi = 0;
-unsigned long mini = 0;
+int maxi = 0;
+int mini = 0;
 
 bool flag_keyboard = true; // Permet de savoir si nous avons l'autorisation de capter une touche
 bool flag_move = false;    // Flag pour signaler si le moteur tourne
