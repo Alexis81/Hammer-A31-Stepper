@@ -48,9 +48,9 @@ void affiche_consigne(float mm)
 void affiche_voyant_run(bool On)
 {
     if(On) {
-      tft.fillCircle(417, 197, 9, TFT_GREEN);
+      tft.fillCircle(418, 197, 9, TFT_GREEN);
     }else{
-      tft.fillCircle(417, 197, 9, TFT_WHITE);
+      tft.fillCircle(418, 197, 9, TFT_WHITE);
     }
 }
 
@@ -60,9 +60,9 @@ void affiche_voyant_run(bool On)
 void affiche_voyant_home(bool On)
 {
     if(On) {
-      tft.fillCircle(362, 197, 9, TFT_RED);
+      tft.fillCircle(363, 197, 9, TFT_RED);
     }else{
-      tft.fillCircle(362, 197, 9, TFT_WHITE);
+      tft.fillCircle(363, 197, 9, TFT_WHITE);
     }
 }
 
@@ -72,9 +72,9 @@ void affiche_voyant_home(bool On)
 void affiche_voyant_dego(bool On)
 {
     if(On) {
-      tft.fillCircle(307, 197, 9, TFT_ORANGE);
+      tft.fillCircle(306, 197, 9, TFT_ORANGE);
     }else{
-      tft.fillCircle(307, 197, 9, TFT_WHITE);
+      tft.fillCircle(306, 197, 9, TFT_WHITE);
     }
 }
 
