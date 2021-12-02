@@ -27,6 +27,7 @@ void parametres()
     tft.drawString("- Fade screen    :", 4, 200);
     tft.drawString("- Up after Home  :", 4, 230);
     tft.drawString("- Offset machine :", 4, 260);
+    tft.drawString("- Hauteur capot  :", 4, 290);
 
     // Serial.println(tft.textWidth("999"));
 
@@ -51,6 +52,8 @@ void parametres()
     tft.drawNumber(UP_AFTER_HOME, x, 230);
     // Offset machine
     tft.drawNumber(OFFSET_MACHINE, x, 260);
+    // Hauteur de la table pour passer en dégauchisseuse
+    tft.drawNumber(HAUTEUR_CAPOT, x, 290);
 
     tft.setTextDatum(TL_DATUM);
     tft.setTextPadding(0);
@@ -149,6 +152,15 @@ void editParametres()
             mini = 1;
             break;
 
+        case 8:
+            nomParametre = "Hauteur capot";
+            parametre = HAUTEUR_CAPOT;
+            unite = "mm";
+            compteur = 8;
+            maxi = 9999;
+            mini = 1;
+            break;
+
         default:
             break;
         }
@@ -243,7 +255,7 @@ void editParametres()
                 // Fléche suivante
                 if ((x >= 420) && (x <= 480) && (y >= 260) && (y <= 320))
                 {
-                    if (compteur < 7)
+                    if (compteur < 8)
                     {
                         compteur = compteur + 1;
                         compteurParametres = compteur;
@@ -302,6 +314,12 @@ void editParametres()
                             sauveNomParametre = "offset_machine";
                             OFFSET_MACHINE = parametre;
                             compteur = 7;
+                            break;
+
+                        case 8:
+                            sauveNomParametre = "hauteur_capot";
+                            HAUTEUR_CAPOT = parametre;
+                            compteur = 8;
                             break;
 
                         case 99:

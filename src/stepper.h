@@ -14,6 +14,17 @@ void stepper_go_to(float mm)
 }
 
 //----------------------------------------------------------------------------------
+// Permet de positionner la table pour passage en dégaichisseuse
+//----------------------------------------------------------------------------------
+void stepper_go_to_degau()
+{
+    if(flag_permit_run) {
+        stepper.setTargetPositionInMillimeters(HAUTEUR_CAPOT);
+        flag_keyboard = true;
+    }
+}
+
+//----------------------------------------------------------------------------------
 // Permet de savoir que nous avons atteind la cible
 //----------------------------------------------------------------------------------
 void is_goal()
@@ -42,10 +53,13 @@ void is_move()
     if (stepper.getDirectionOfMotion())
     {
         flag_move = true;
+        affiche_voyant_run(true);
     }
     else
     {
         flag_move = false;
+        affiche_voyant_run(false);
+        affiche_voyant_dego(false);
     }
 }
 
@@ -61,6 +75,10 @@ void set_home()
     stepper.setCurrentPositionInMillimeters((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
     stepper.setTargetPositionInMillimeters((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
 
-    
-    // Serial.println((float)HAUTEUR_MAX + (OFFSET_MACHINE_FLOAT));
+    // Si l'inter home est activé
+    if (flag_home_on)
+    {
+        affiche_voyant_home(false);
+        flag_home_on = false;
+    }
 }

@@ -24,6 +24,7 @@ int INCREMENT;              // en mm (Increment en mm pour monter ou descendre l
 int UP_AFTER_HOME;          // en mm (Millimètre pour remonter une fois Home trouvé, pour relacher l'interrupteur)
 int OFFSET_MACHINE;         // en mm (Offset pour ajuster la mesure de la machine en Int)
 float OFFSET_MACHINE_FLOAT; // en centième de mm (0,01) - (Offset pour ajuster la mesure de la machine en Int)
+int HAUTEUR_CAPOT;          // hauteur de la table pour passer en dégauchisseuse
 
 //-- Back Light LCD
 #define pwmChannel 1  // Canal du PWM
@@ -45,11 +46,11 @@ float consigne = (float)HAUTEUR_MINI;
 
 // variables for software debouncing of the limit switches
 unsigned long lastDebounceTime = 0;
-unsigned long debounceDelay = 300; // the minimum delay in milliseconds to check for bouncing of the switch. Increase this slighlty if you switches tend to bounce a lot
+unsigned long debounceDelay = 100; // the minimum delay in milliseconds to check for bouncing of the switch. Increase this slighlty if you switches tend to bounce a lot
 
 // variables for software debouncing keyboard
 unsigned long lastDebounceTimeKeyboard = 0;
-unsigned long debounceDelayKeyboard = 100;
+unsigned long debounceDelayKeyboard = 250;
 
 int keyboard = 0;                // Chiffre saisie au clavier
 int Etat = 0;                    // Etat bouton Ok - Stop etc...

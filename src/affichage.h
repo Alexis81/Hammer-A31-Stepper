@@ -42,6 +42,42 @@ void affiche_consigne(float mm)
 }
 
 /*------------------------------------------------------------------------------
+  Affiche voyant Run
+------------------------------------------------------------------------------*/
+void affiche_voyant_run(bool On)
+{
+    if(On) {
+      tft.fillCircle(417, 197, 9, TFT_GREEN);
+    }else{
+      tft.fillCircle(417, 197, 9, TFT_WHITE);
+    }
+}
+
+/*------------------------------------------------------------------------------
+  Affiche voyant Home
+------------------------------------------------------------------------------*/
+void affiche_voyant_home(bool On)
+{
+    if(On) {
+      tft.fillCircle(362, 197, 9, TFT_RED);
+    }else{
+      tft.fillCircle(362, 197, 9, TFT_WHITE);
+    }
+}
+
+/*------------------------------------------------------------------------------
+  Affiche voyant Dego
+------------------------------------------------------------------------------*/
+void affiche_voyant_dego(bool On)
+{
+    if(On) {
+      tft.fillCircle(307, 197, 9, TFT_ORANGE);
+    }else{
+      tft.fillCircle(307, 197, 9, TFT_WHITE);
+    }
+}
+
+/*------------------------------------------------------------------------------
   Permet d'afficher le bouton OK
 ------------------------------------------------------------------------------*/
 void affiche_button_ok()
@@ -81,7 +117,7 @@ void affiche_alarm()
 void affiche_logo()
 {
     tft.fillScreen(TFT_WHITE);
-    fex.drawBmp("/Hammer.bmp", 80, 15);
+    fex.drawJpgFile(SPIFFS, "/Hammer.jpg", 80, 15);
     delay(2000);
 }
 
@@ -112,8 +148,8 @@ void affiche_titre_menu(String Name)
 ------------------------------------------------------------------------------*/
 void afficheMenuPrincipal()
 {
-    tft.fillScreen(TFT_BLACK);
-    fex.drawBmp("/Clavier.bmp", 0, 0);
+    tft.fillScreen(TFT_WHITE);
+    fex.drawJpgFile(SPIFFS, "/Clavier.jpg", 0, 0);
     affiche_reel(consigne);
     affiche_consigne(0.0);
     affiche_button_ok();

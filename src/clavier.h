@@ -25,6 +25,15 @@ void scan_keyboard()
                 parametres();
             }
 
+            // Touche Dégo
+            if ((x >= 282) && (x <= 387) && (y >= 174) && (y <= 244))
+            {
+                flag_keyboard = false;
+                Menu = 0;
+                affiche_voyant_dego(true);
+                stepper_go_to_degau();
+            }
+
             // Touche Del
             if ((x >= 0) && (x <= 89) && (y >= 241) && (y <= 319))
             {
@@ -37,6 +46,7 @@ void scan_keyboard()
                 stepper.emergencyStop();
                 affiche_consigne(consigne);
                 affiche_button_ok();
+                affiche_voyant_home(false);
                 Etat = 0;
             }
 
@@ -149,7 +159,7 @@ void scan_keyboard()
                 flag_digit3 = false;
                 flag_point = false;
 
-                // etat :
+                // Etat :
                 //        0 - Moteur en mouvement
                 //        1 - Arrêt urgence
                 //        2 - Reprise arrêt urgence

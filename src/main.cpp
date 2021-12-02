@@ -121,10 +121,10 @@ void setup()
   // Affichage logo
   affiche_logo();
 
+  // Recherche Home pour étalonner la mesure
   stepper.goToLimitAndSetAsHome(__null, (((HAUTEUR_MAX + OFFSET_MACHINE_FLOAT) * STEP_PER_MILLIMETER) + 1000));
 
   afficheMenuPrincipal();
-  
 }
 
 void loop()
@@ -144,7 +144,7 @@ void loop()
   if (limitSwitchState == oldConfirmedLimitSwitchState && (millis() - lastDebounceTime) > debounceDelay)
   {
     lastDebounceTime = millis();
-    //affiche_alarm_ampoule_home(true);
+    affiche_voyant_home(true);
     flag_home_on = true;
 
     //-- Lors du premier run recherche Home
@@ -153,7 +153,6 @@ void loop()
       flag_first_run = false;
       oldConfirmedLimitSwitchState = limitSwitchState;
       stepper.setLimitSwitchActive(stepper.LIMIT_SWITCH_COMBINED_BEGIN_AND_END);
-
       set_home();
     }
 
